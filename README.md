@@ -15,6 +15,8 @@ My terminal + Claude Code workflow, reproducible on a fresh Ubuntu box. Run
   - **autocompact** tuned: enabled, 180k window
     (`autoCompactEnabled`, `autoCompactWindow` in `settings.json`).
   - opus[1m], 1M context, `dontAsk` permissions, remote control at startup.
+- **claude shell alias** — `--dangerously-skip-permissions --remote-control`
+  (`config/shell/aliases.sh`, sourced from `~/.bashrc`).
 - **GNOME night-light** — always on, 4000K, dark color-scheme.
 
 ## Install

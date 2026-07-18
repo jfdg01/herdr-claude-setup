@@ -34,7 +34,16 @@ else
   echo "SKIP: claude CLI not found — install it, plugins load from settings.json on launch"
 fi
 
-# ---- 3. GNOME night light (warm, always on) ----
+# ---- 3. claude shell alias ----
+msg "Installing claude alias (~/.bashrc)"
+if ! grep -qF "alias claude=" ~/.bashrc 2>/dev/null; then
+  printf '\n# herdr-claude-setup\nsource "%s/config/shell/aliases.sh"\n' "$SELF_DIR" >> ~/.bashrc
+  echo "added alias source to ~/.bashrc"
+else
+  echo "alias claude already present — left ~/.bashrc alone"
+fi
+
+# ---- 4. GNOME night light (warm, always on) ----
 if command -v gsettings >/dev/null; then
   msg "Applying night-light + dark theme"
   C=org.gnome.settings-daemon.plugins.color
