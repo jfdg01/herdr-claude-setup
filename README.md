@@ -6,7 +6,9 @@ My terminal + Claude Code workflow, reproducible on a fresh Ubuntu box. Run
 ## What it sets up
 
 - **herdr** terminal — gruvbox dark theme, agent panel sorted by spaces
-  (`config/herdr/config.toml`).
+  (`config/herdr/config.toml`). herdr is a TUI, so it renders in a host
+  terminal (gnome-terminal); **JetBrains Mono 14** is set on gnome-terminal's
+  default profile and the font ttfs ship in `config/fonts/`.
 - **Claude Code CLI** with:
   - **caveman** + **ponytail** plugins (terse output, laziest-that-works),
     plus `frontend-design`.

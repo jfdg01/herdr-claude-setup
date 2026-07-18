@@ -13,7 +13,25 @@ msg "Installing herdr config (gruvbox theme)"
 mkdir -p ~/.config/herdr
 cp "$SELF_DIR/config/herdr/config.toml" ~/.config/herdr/config.toml
 
-# ---- 2. Claude Code settings + custom statusline ----
+# ---- 2. JetBrains Mono font + host-terminal font ----
+# herdr is a TUI: its font comes from the host terminal (gnome-terminal here).
+msg "Installing JetBrains Mono + setting gnome-terminal font"
+mkdir -p ~/.local/share/fonts
+cp "$SELF_DIR"/config/fonts/JetBrainsMono*.ttf ~/.local/share/fonts/
+fc-cache -f ~/.local/share/fonts >/dev/null 2>&1 || true
+if command -v gsettings >/dev/null; then
+  P=$(gsettings get org.gnome.Terminal.ProfilesList default 2>/dev/null | tr -d "'")
+  if [ -n "$P" ]; then
+    base="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$P/"
+    gsettings set "$base" use-system-font false
+    gsettings set "$base" font 'JetBrains Mono 14'
+    echo "gnome-terminal default profile -> JetBrains Mono 14"
+  else
+    echo "NOTE: no gnome-terminal default profile — set your host terminal font to JetBrains Mono 14 manually"
+  fi
+fi
+
+# ---- 3. Claude Code settings + custom statusline ----
 msg "Installing Claude Code settings + statusline"
 mkdir -p ~/.claude
 cp "$SELF_DIR/config/claude/settings.json" ~/.claude/settings.json
@@ -34,7 +52,7 @@ else
   echo "SKIP: claude CLI not found — install it, plugins load from settings.json on launch"
 fi
 
-# ---- 3. claude shell alias ----
+# ---- 4. claude shell alias ----
 msg "Installing claude alias (~/.bashrc)"
 if ! grep -qF "alias claude=" ~/.bashrc 2>/dev/null; then
   printf '\n# herdr-claude-setup\nsource "%s/config/shell/aliases.sh"\n' "$SELF_DIR" >> ~/.bashrc
@@ -43,7 +61,7 @@ else
   echo "alias claude already present — left ~/.bashrc alone"
 fi
 
-# ---- 4. GNOME night light (warm, always on) ----
+# ---- 5. GNOME night light (warm, always on) ----
 if command -v gsettings >/dev/null; then
   msg "Applying night-light + dark theme"
   C=org.gnome.settings-daemon.plugins.color
