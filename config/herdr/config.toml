@@ -1,0 +1,6 @@
+[ui]
+agent_panel_sort = "spaces"
+
+[theme]
+auto_switch = false
+dark_name = "gruvbox"
