@@ -31,6 +31,12 @@ if command -v gsettings >/dev/null; then
   fi
 fi
 
+# ---- 2b. gnome-terminal gruvbox palette ----
+# herdr renders through the host terminal's ANSI colors, so the theme name in
+# config.toml isn't enough — the 16 colors live here.
+msg "Applying gruvbox palette to gnome-terminal"
+bash "$SELF_DIR/config/gnome-terminal/palette.sh"
+
 # ---- 3. Claude Code settings + custom statusline ----
 msg "Installing Claude Code settings + statusline"
 mkdir -p ~/.claude
