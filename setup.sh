@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Reproducible terminal + Claude Code workflow setup.
-# ghostty/herdr terminal (gruvbox) + Claude Code CLI (caveman + ponytail plugins,
+# herdr terminal (gruvbox) + Claude Code CLI (caveman + ponytail plugins,
 # custom statusline, autocompact tuning, global CLAUDE.md) + GNOME night-light.
 # Idempotent: safe to re-run.
 #
@@ -36,15 +36,6 @@ do_herdr() {
   msg "Installing herdr config (gruvbox theme)"
   mkdir -p ~/.config/herdr
   cp "$SELF_DIR/config/herdr/config.toml" ~/.config/herdr/config.toml
-}
-
-do_ghostty() {
-  if ! command -v ghostty >/dev/null && [ ! -d ~/.config/ghostty ]; then
-    echo "SKIP: ghostty not installed on this machine"
-    return
-  fi
-  msg "Installing ghostty config"
-  link config/ghostty/config.ghostty ~/.config/ghostty/config.ghostty
 }
 
 do_fonts() {
@@ -122,7 +113,7 @@ do_gnome() {
 
 case "${1:-all}" in
   claude)  do_claude ;;
-  all)     do_herdr; do_ghostty; do_fonts; do_claude; do_alias; do_gnome ;;
+  all)     do_herdr; do_fonts; do_claude; do_alias; do_gnome ;;
   *)       echo "usage: $0 [all|claude]" >&2; exit 2 ;;
 esac
 

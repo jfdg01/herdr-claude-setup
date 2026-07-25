@@ -10,10 +10,10 @@ the repo and `git diff` is the drift detector.
 
 ## What it sets up
 
-- **ghostty / herdr** terminal — gruvbox dark theme, agent panel sorted by
-  spaces (`config/ghostty/config.ghostty`, `config/herdr/config.toml`). herdr
-  is a TUI, so it renders in a host terminal; **JetBrains Mono 14** is set on
-  gnome-terminal's default profile and the font ttfs ship in `config/fonts/`.
+- **herdr** terminal multiplexer — gruvbox dark theme, agent panel sorted by
+  spaces (`config/herdr/config.toml`). herdr is a TUI, so it renders in a host
+  terminal; **JetBrains Mono 14** is set on gnome-terminal's default profile
+  and the font ttfs ship in `config/fonts/`.
 - **Claude Code CLI** with:
   - a **global `CLAUDE.md`** — git workflow, agent fan-out budget, context &
     token hygiene rules, uv-only Python, md-to-pdf, Godot/Spine pointers.
@@ -44,7 +44,6 @@ the statusline (`sudo apt install jq`).
 ## Layout
 
 ```
-config/ghostty/config.ghostty       -> ~/.config/ghostty/config.ghostty   (symlink, skipped if no ghostty)
 config/herdr/config.toml            -> ~/.config/herdr/config.toml        (copy)
 config/claude/CLAUDE.md             -> ~/.claude/CLAUDE.md                (symlink)
 config/claude/settings.json         -> ~/.claude/settings.json            (symlink)
