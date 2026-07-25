@@ -10,6 +10,8 @@
 set -euo pipefail
 
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# non-interactive ssh does not pick this up, and claude lives here
+export PATH="$HOME/.local/bin:$PATH"
 msg() { printf '\n\033[1;34m==>\033[0m %s\n' "$1"; }
 
 # link <repo-relative-source> <absolute-target>
