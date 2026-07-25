@@ -80,6 +80,14 @@ paid on every request and is invisible until you look. So working room is
    asked** — it is ~12× a Sonnet agent. Effort: `high` on Sonnet reasoning
    agents, `low` on mechanical stages (grep, collect, transform) where high
    effort only buys extra tool calls.
+   **In `Workflow` scripts, write `{model: 'sonnet', effort: 'low'}` on every
+   `agent()` call by default** — omitting `model` means `inherit`, so an
+   `opus[1m]` session silently fans out Opus agents at ~4.7× the cost, and an
+   ultracode run is where that multiplies. Raise a stage off the default only
+   deliberately: `effort: 'high'` for a stage that must reason, `model` left
+   off (inherit) only for final synthesis or tie-break judging. This is a
+   `Workflow`-only rule — plain `Agent` calls (Explore, forks, one-off
+   investigators) keep inheriting the session model.
 7. **Keep subagent prompts small.** Subagents average 41k context, p90 88k.
    They inherit whatever you hand them; hand them less. **In the long sessions
    the fanout is the majority of the bill, not the conversation:** across the

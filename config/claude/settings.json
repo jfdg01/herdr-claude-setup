@@ -3,9 +3,6 @@
     "defaultMode": "dontAsk"
   },
   "model": "opus[1m]",
-  "env": {
-    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
-  },
   "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
