@@ -96,7 +96,8 @@ do_claude() {
 
 do_alias() {
   msg "Installing claude alias (~/.bashrc)"
-  if ! grep -qF "alias claude=" ~/.bashrc 2>/dev/null; then
+  # match either a hand-written alias or a previous source line from this repo
+  if ! grep -qE "alias claude=|herdr-claude-setup/config/shell/aliases.sh" ~/.bashrc 2>/dev/null; then
     printf '\n# herdr-claude-setup\nsource "%s/config/shell/aliases.sh"\n' "$SELF_DIR" >> ~/.bashrc
     echo "added alias source to ~/.bashrc"
   else
