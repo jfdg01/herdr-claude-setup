@@ -23,8 +23,10 @@ the repo and `git diff` is the drift detector.
   - custom **statusline** — `user@cwd`, model/effort, git branch, token count
     with % to autocompact (read live from `settings.json`, project override
     first), and 5h/weekly usage.
-  - **autocompact** tuned: enabled, **110k** window — see the hygiene section
-    of `CLAUDE.md` for the measurement behind that number.
+  - **autocompact disabled**, **110k** window kept as the `/compact` target and
+    statusline gauge. Autocompact reserved 30% of the window as a buffer, which
+    cost more room than it was worth — compaction is now manual. See the
+    hygiene section of `CLAUDE.md` for the measurements behind both numbers.
   - opus[1m], `medium` effort, `dontAsk` permissions, remote control at startup.
 - **claude shell alias** — `--dangerously-skip-permissions --remote-control`
   (`config/shell/aliases.sh`, sourced from `~/.bashrc`).
