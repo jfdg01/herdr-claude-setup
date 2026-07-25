@@ -96,10 +96,12 @@ That single fact drives all the rules below.
 
 ## Markdown to PDF Conversion
 
-Always use `~/.local/scripts/md_to_pdf.py` to convert `.md` files to PDF. Never use other methods.
+Always use the `md-to-pdf` launcher to convert `.md` files to PDF. Never use
+other methods. It is on `PATH` on every machine (`~/.local/bin/md-to-pdf` ->
+`~/md-to-pdf/src/md-to-pdf`) and runs the converter inside that repo's own venv.
 
 ```bash
-python3 ~/.local/scripts/md_to_pdf.py file.md
+md-to-pdf file.md
 ```
 
 ## Godot + Spine2D + Claude Setup

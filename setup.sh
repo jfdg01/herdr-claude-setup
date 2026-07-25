@@ -69,6 +69,7 @@ do_claude() {
   link config/claude/CLAUDE.md              ~/.claude/CLAUDE.md
   link config/claude/settings.json          ~/.claude/settings.json
   link config/claude/statusline-command.sh  ~/.claude/statusline-command.sh
+  link config/claude/commands               ~/.claude/commands
   chmod +x "$SELF_DIR/config/claude/statusline-command.sh"
 
 

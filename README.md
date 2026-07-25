@@ -17,6 +17,7 @@ the repo and `git diff` is the drift detector.
 - **Claude Code CLI** with:
   - a **global `CLAUDE.md`** — git workflow, agent fan-out budget, context &
     token hygiene rules, uv-only Python, md-to-pdf, Godot/Spine pointers.
+  - **slash commands** (`config/claude/commands/`) — `/new-doc`, `/open-terminal`.
   - **caveman** + **ponytail** plugins (terse output, laziest-that-works),
     plus `frontend-design`.
   - custom **statusline** — `user@cwd`, model/effort, git branch, token count
@@ -48,6 +49,7 @@ config/herdr/config.toml            -> ~/.config/herdr/config.toml        (copy)
 config/claude/CLAUDE.md             -> ~/.claude/CLAUDE.md                (symlink)
 config/claude/settings.json         -> ~/.claude/settings.json            (symlink)
 config/claude/statusline-command.sh -> ~/.claude/statusline-command.sh    (symlink)
+config/claude/commands/             -> ~/.claude/commands                  (symlink)
 config/claude/hooks/herdr-agent-state.sh -> ~/.claude/hooks/              (copy — herdr owns it)
 ```
 
