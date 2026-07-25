@@ -4,6 +4,20 @@
   },
   "model": "opus[1m]",
   "disableClaudeAiConnectors": true,
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/home/gara/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
   "worktree": {
     "baseRef": "fresh"
   },
@@ -13,26 +27,26 @@
     "command": "bash /home/gara/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "ponytail@ponytail": true,
+    "caveman@caveman": true,
     "frontend-design@claude-plugins-official": true,
-    "caveman@caveman": true
+    "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
-    "ponytail": {
-      "source": {
-        "source": "github",
-        "repo": "DietrichGebert/ponytail"
-      }
-    },
     "caveman": {
       "source": {
         "source": "github",
         "repo": "JuliusBrussee/caveman"
       }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
     }
   },
   "effortLevel": "medium",
-  "autoCompactWindow": 180000,
+  "autoCompactWindow": 110000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "default",

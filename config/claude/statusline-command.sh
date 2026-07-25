@@ -2,11 +2,14 @@
 input=$(cat)
 
 model=$(echo "$input" | jq -r '.model.display_name // "unknown"')
+model=${model%% (*}  # strip " (1M context)" etc.
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // "?"')
 effort=$(echo "$input" | jq -r '.effort.level // empty')
 
 tokens=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
-compact_threshold=140000
+# ponytail: only checks $cwd, not parent dirs; walk up if you start nesting settings
+compact_threshold=$(jq -r '.autoCompactWindow // empty' "$cwd/.claude/settings.json" 2>/dev/null)
+[ -z "$compact_threshold" ] && compact_threshold=$(jq -r '.autoCompactWindow // 110000' ~/.claude/settings.json 2>/dev/null || echo 110000)
 compact_pct=$(echo "$tokens $compact_threshold" | awk '{printf "%.0f", $1/$2*100}')
 
 branch=$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null)
