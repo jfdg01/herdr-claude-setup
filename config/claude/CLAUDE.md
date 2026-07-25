@@ -53,21 +53,20 @@ paid on every request and is invisible until you look. So working room is
    or `caveman:cavecrew-investigator`. They read the files and return a
    `file:line` digest; the bulk never enters main context. Break-even is ~7
    requests, so this is a win on anything non-trivial.
-3. **`/clear` on task switch, `/compact` mid-task — and it is now on you.**
-   Autocompact is **disabled**: it kept firing mid-task, and its 30% buffer
-   was costing more room than the compaction it reserved for. The tradeoff is
-   that nothing stops context growing to the model's 1M limit, which is the
-   most expensive place to be. So compact deliberately at a natural break.
-   Compaction is cheap (summary output ~1.4k); carrying a stale 100k context
-   is the expensive thing, not resetting it.
+3. **`/clear` on task switch, `/compact` only mid-task.** Compaction is cheap
+   (summary output ~1.4k); carrying a stale 100k context is the expensive
+   thing, not resetting it. Autocompact stays **on** — it is the safety net
+   that stops a session drifting up to the model's 1M limit, which is the most
+   expensive place to be. If it fires so often a session feels unusable, that
+   is rule 5 talking, not a reason to disable it.
 4. **Cut overhead before touching `autoCompactWindow`.** A token of `O` removed
    buys a full token of room *and* comes off every request's bill; a token of
    window buys only 0.70 of a token and *adds* to the bill. Raising the window
    "to avoid compaction" is a false economy — compaction is cheap. `W` stays
-   110k on every box: it is still the `/compact` target and the statusline's
-   percentage, so it remains the number to keep live context near. Were
-   autocompact re-enabled, note the hard floor at `W = O / 0.70` — below it a
-   session compacts on turn one, forever (jetson `O` = 41.7k → floor **60k**).
+   110k on every box, which puts average live context at ~74k, the top of the
+   cheap band. There is also a hard floor: below `W = O / 0.70` a session
+   compacts on turn one, forever (jetson `O` = 41.7k → floor **60k**), and it
+   gets unusable well before that.
 5. **Memory files are overhead, and `/memory` loads the whole directory.**
    Not just `MEMORY.md` — every file in it, relevant or not. On jetson that is
    18 files = **19.9k tokens = 48% of `O`**, re-read on all ~6,300 requests of

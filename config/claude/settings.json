@@ -52,7 +52,7 @@
   "tui": "default",
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "normal",
-  "autoCompactEnabled": false,
+  "autoCompactEnabled": true,
   "switchModelsOnFlag": false,
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
