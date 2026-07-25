@@ -3,6 +3,9 @@
     "defaultMode": "dontAsk"
   },
   "model": "opus[1m]",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
   "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
@@ -45,7 +48,7 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "autoCompactWindow": 110000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
