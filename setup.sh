@@ -71,8 +71,6 @@ do_claude() {
   link config/claude/statusline-command.sh  ~/.claude/statusline-command.sh
   chmod +x "$SELF_DIR/config/claude/statusline-command.sh"
 
-  # Memory is project-scoped: this path covers sessions started in ~ only.
-  link config/claude/memory ~/.claude/projects/-home-gara/memory
 
   # herdr owns this file and overwrites it on reinstall, so copy rather than
   # link. It self-guards (`[ "$HERDR_ENV" = 1 ] || exit 0`), harmless off-herdr.

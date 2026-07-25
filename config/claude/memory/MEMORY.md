@@ -1,3 +1,0 @@
-- [Workflow token budget](workflow-token-budget.md) — measured $/agent by model; tier the fanout, keep the breadth
-- [Compaction break-even](compaction-break-even.md) — smaller autoCompactWindow is cheaper; base scales with the window
-- [Jetson context profile](jetson-context-profile.md) — 82% of all spend, lives on the 3090 box, git repo

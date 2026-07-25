@@ -25,8 +25,6 @@ the repo and `git diff` is the drift detector.
   - **autocompact** tuned: enabled, **110k** window — see the hygiene section
     of `CLAUDE.md` for the measurement behind that number.
   - opus[1m], `medium` effort, `dontAsk` permissions, remote control at startup.
-  - **memory** files (`config/claude/memory/`) — the measured cost data the
-    hygiene rules are derived from.
 - **claude shell alias** — `--dangerously-skip-permissions --remote-control`
   (`config/shell/aliases.sh`, sourced from `~/.bashrc`).
 - **GNOME night-light** — always on, 4000K, dark color-scheme.
@@ -50,7 +48,6 @@ config/herdr/config.toml            -> ~/.config/herdr/config.toml        (copy)
 config/claude/CLAUDE.md             -> ~/.claude/CLAUDE.md                (symlink)
 config/claude/settings.json         -> ~/.claude/settings.json            (symlink)
 config/claude/statusline-command.sh -> ~/.claude/statusline-command.sh    (symlink)
-config/claude/memory/               -> ~/.claude/projects/-home-gara/memory (symlink)
 config/claude/hooks/herdr-agent-state.sh -> ~/.claude/hooks/              (copy — herdr owns it)
 ```
 
@@ -63,8 +60,9 @@ config/claude/hooks/herdr-agent-state.sh -> ~/.claude/hooks/              (copy 
 - `settings.json` is byte-identical on every machine. The herdr `SessionStart`
   hook it declares self-guards (`[ "$HERDR_ENV" = 1 ] || exit 0`), so it is a
   no-op on boxes without herdr.
-- Claude's **memory is project-scoped**, so the symlink only covers sessions
-  started in `~`. Sessions in another project dir get their own memory.
+- **Memory is deliberately not tracked.** It is project-scoped, so sharing it
+  would only ever cover sessions started in one directory — this repo holds
+  purely global config. Memory stays local per machine.
 - Paths are absolute (`/home/gara/...`) — edit if your username differs.
 - Godot/Spine-specific setup lives separately in
   [spine-godot-setup](https://github.com/jfdg01/spine-godot-setup); this repo
