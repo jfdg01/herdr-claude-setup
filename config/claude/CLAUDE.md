@@ -39,11 +39,19 @@ context is not. That single fact drives all the rules below.
 W  =  overhead O  +  33k autocompact reserve  +  messages
 ```
 
-`O` = system prompt + tools + custom agents + **memory files** + skills. It is
+`O` = system prompt + tools + custom agents + memory files + skills. It is
 paid on every request and is invisible until you look. So working room is
 `R = W − 33k − O`, and the post-compact base is `B ≈ O + 23k`
 (138 observed resets at W=110k; B is *not* a fixed fraction of W and *not* a
 constant).
+
+**"Memory files" in that row means the always-on `CLAUDE.md` files plus
+`MEMORY.md` — not the memory directory.** Measured on jetson 2026-07-26:
+`~/.claude/CLAUDE.md` 4.1k + project `CLAUDE.md` 5.3k + `MEMORY.md` 936 = 10.3k;
+the 17 individual memory files cost **zero** until one is recalled. Note also
+that `/context` lists deferred tools (16.5k) and MCP (308) in the breakdown but
+**excludes them from the total** — they load on demand. Read the total, not the
+sum of the rows.
 
 The reserve is a **flat 33k, not 30% of W** — it reads as 30% only because it
 was first measured at W=110k. From the CLI bundle: `min(max_output_tokens,
@@ -75,15 +83,28 @@ row is hidden entirely.
    **143k** on every box, which is the old 110k target plus the flat 33k
    reserve — same ~110k of real room, and average live context at ~74k, the top
    of the cheap band. There is also a hard floor: below `W = O + 33k` a session
-   compacts on turn one, forever (jetson `O` = 41.7k → floor **75k**), and it
-   gets unusable well before that. The setting itself is clamped to
-   [100k, 1M].
-5. **Memory files are overhead, and `/memory` loads the whole directory.**
-   Not just `MEMORY.md` — every file in it, relevant or not. On jetson that is
-   18 files = **19.9k tokens = 48% of `O`**, re-read on all ~6,300 requests of
-   a long session ≈ **$64 for one conversation**. Prune stale memories, keep
-   project `CLAUDE.md` under ~5k tokens, and check `/context` when a session
-   feels cramped.
+   compacts on turn one, forever (jetson `O` = **32.5k** measured 2026-07-26 →
+   floor **65.5k**), and it gets unusable well before that. The setting itself
+   is clamped to [100k, 1M]. Jetson was found at 163k on 2026-07-26 and
+   reverted — if a box drifts off 143k, put it back rather than documenting
+   the drift.
+5. **Prune memories for staleness, never for size.** The memory *directory* is
+   **not** resident — only `MEMORY.md` is (936 tok on jetson), and the
+   individual files arrive on recall. An earlier version of this rule claimed
+   "18 files = 19.9k tokens = 48% of `O` ≈ $64 per conversation"; re-measured
+   2026-07-26 that is wrong by ~21×, so **deleting memories to save tokens
+   saves nothing**. What a stale memory costs instead is a session acting on a
+   fact that has rotted: `reference-key-docs` cited `results/` for weeks after
+   it was renamed `experiments/`. So audit them — every path still exists,
+   every ID still resolves — and delete on *wrongness*, not on length. The one
+   part of the old rule that holds: keep project `CLAUDE.md` under ~5k tokens,
+   because that file really is on every request.
+
+   Skills are near-unrecoverable, so do not go hunting there either: plugins
+   carry their own `SessionStart` hooks, so disabling `caveman` or `ponytail`
+   to reclaim ~840 tok also turns the mode off. What is actually left to cut
+   after the `CLAUDE.md` files is small; `Messages` runs about 2× all of `O` in
+   a working session, which makes rule 3 the real lever.
 6. **Pick the subagent model per stage.** Measured cost per agent: `sonnet-4-6
    $0.88`, `haiku-4-5 $1.17`, `opus-4-8 $3.55`, `opus-5 $4.10`, `fable-5
    $10.28`. Sonnet for finders, scanners, verifiers and mechanical stages;
