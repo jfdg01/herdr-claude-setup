@@ -86,9 +86,15 @@ row is hidden entirely.
    feels cramped.
 6. **Pick the subagent model per stage.** Measured cost per agent: `sonnet-4-6
    $0.88`, `haiku-4-5 $1.17`, `opus-4-8 $3.55`, `opus-5 $4.10`, `fable-5
-   $10.28`. Sonnet for finders, scanners and verifiers; inherited Opus only
-   for final synthesis and tie-break judging; **Fable only when explicitly
-   asked** — it is ~12× a Sonnet agent. Effort: `high` on Sonnet reasoning
+   $10.28`. Sonnet for finders, scanners, verifiers and mechanical stages;
+   inherited Opus for **any stage whose output gates real spend** —
+   experiment/plan design, adversarial critique, final synthesis — not only
+   the last one; **Fable only when explicitly asked** — it is ~12× a Sonnet
+   agent. The ~$3 delta is a *large*-fan-out rule: the per-agent multiplier
+   dominates at 228 agents, not in a workflow of **under ~8** with a few
+   judgment-heavy stages, where one wrong design decision burns a multi-day
+   experiment run. Gate the model on **what the stage's output authorizes**,
+   not on its position in the pipeline. Effort: `high` on Sonnet reasoning
    agents, `low` on mechanical stages (grep, collect, transform) where high
    effort only buys extra tool calls.
    **In `Workflow` scripts, write `{model: 'sonnet', effort: 'low'}` on every
@@ -96,7 +102,8 @@ row is hidden entirely.
    `opus[1m]` session silently fans out Opus agents at ~4.7× the cost, and an
    ultracode run is where that multiplies. Raise a stage off the default only
    deliberately: `effort: 'high'` for a stage that must reason, `model` left
-   off (inherit) only for final synthesis or tie-break judging. This is a
+   off (inherit) for the spend-gating stages above — design, adversarial
+   critique, synthesis — not only for final synthesis. This is a
    `Workflow`-only rule — plain `Agent` calls (Explore, forks, one-off
    investigators) keep inheriting the session model.
 7. **Keep subagent prompts small.** Subagents average 41k context, p90 88k.
