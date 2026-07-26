@@ -46,7 +46,7 @@
     }
   },
   "effortLevel": "high",
-  "autoCompactWindow": 110000,
+  "autoCompactWindow": 143000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "default",

@@ -36,13 +36,22 @@ context is not. That single fact drives all the rules below.
 **How the window actually splits** (run `/context` to see it for real):
 
 ```
-W  =  overhead O  +  0.30·W autocompact buffer  +  messages
+W  =  overhead O  +  33k autocompact reserve  +  messages
 ```
 
 `O` = system prompt + tools + custom agents + **memory files** + skills. It is
 paid on every request and is invisible until you look. So working room is
-`R = 0.70·W − O`, and the post-compact base is `B ≈ O + 0.21·W`
-(138 observed resets; B is *not* a fixed fraction of W and *not* a constant).
+`R = W − 33k − O`, and the post-compact base is `B ≈ O + 23k`
+(138 observed resets at W=110k; B is *not* a fixed fraction of W and *not* a
+constant).
+
+The reserve is a **flat 33k, not 30% of W** — it reads as 30% only because it
+was first measured at W=110k. From the CLI bundle: `min(max_output_tokens,
+20000) + 13000`, independent of window size. It is shown as "Autocompact
+buffer" in `/context` only when autocompact is **on** *and* the window comes
+from an explicit `autoCompactWindow` setting; with autocompact off the reserve
+drops to a flat 3k ("Compact buffer"), and with the window left on `auto` the
+row is hidden entirely.
 
 1. **Never dump raw search output into main context.** Tighten the command
    first — `grep -l` / `-c` / `head -50` instead of full matches, `Read` with
@@ -63,10 +72,12 @@ paid on every request and is invisible until you look. So working room is
    buys a full token of room *and* comes off every request's bill; a token of
    window buys only 0.70 of a token and *adds* to the bill. Raising the window
    "to avoid compaction" is a false economy — compaction is cheap. `W` stays
-   110k on every box, which puts average live context at ~74k, the top of the
-   cheap band. There is also a hard floor: below `W = O / 0.70` a session
-   compacts on turn one, forever (jetson `O` = 41.7k → floor **60k**), and it
-   gets unusable well before that.
+   **143k** on every box, which is the old 110k target plus the flat 33k
+   reserve — same ~110k of real room, and average live context at ~74k, the top
+   of the cheap band. There is also a hard floor: below `W = O + 33k` a session
+   compacts on turn one, forever (jetson `O` = 41.7k → floor **75k**), and it
+   gets unusable well before that. The setting itself is clamped to
+   [100k, 1M].
 5. **Memory files are overhead, and `/memory` loads the whole directory.**
    Not just `MEMORY.md` — every file in it, relevant or not. On jetson that is
    18 files = **19.9k tokens = 48% of `O`**, re-read on all ~6,300 requests of

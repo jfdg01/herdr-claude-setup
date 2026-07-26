@@ -8,8 +8,10 @@ effort=$(echo "$input" | jq -r '.effort.level // empty')
 
 tokens=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
 # ponytail: only checks $cwd, not parent dirs; walk up if you start nesting settings
-compact_threshold=$(jq -r '.autoCompactWindow // empty' "$cwd/.claude/settings.json" 2>/dev/null)
-[ -z "$compact_threshold" ] && compact_threshold=$(jq -r '.autoCompactWindow // 110000' ~/.claude/settings.json 2>/dev/null || echo 110000)
+compact_window=$(jq -r '.autoCompactWindow // empty' "$cwd/.claude/settings.json" 2>/dev/null)
+[ -z "$compact_window" ] && compact_window=$(jq -r '.autoCompactWindow // 143000' ~/.claude/settings.json 2>/dev/null || echo 143000)
+# ponytail: reserve is a flat 33k (min(max_output,20k)+13k), not a fraction of the window
+compact_threshold=$((compact_window - 33000))
 compact_pct=$(echo "$tokens $compact_threshold" | awk '{printf "%.0f", $1/$2*100}')
 
 branch=$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null)
