@@ -1,0 +1,20 @@
+{
+  "files.autoSave": "onFocusChange",
+  "editor.formatOnSave": true,
+  "editor.wordWrap": "on",
+  "godotTools.editorPath.godot4": "/home/gara/godot-exe/Godot_v4.7-stable_linux.x86_64",
+  "godotTools.lsp.headless": true,
+  "workbench.startupEditor": "none",
+  "chat.tips.enabled": false,
+  "workbench.colorTheme": "Gruvbox Dark Medium",
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.fontFamily": "'JetBrains Mono', monospace",
+  "editor.fontLigatures": true,
+  "terminal.integrated.fontFamily": "'JetBrains Mono'",
+  "workbench.editorAssociations": {
+    "*.copilotmd": "vscode.markdown.preview.editor",
+    "*.mp4": "analyticsignal.preview-mp4"
+  }
+}

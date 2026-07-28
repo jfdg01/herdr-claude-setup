@@ -52,10 +52,4 @@ Prefer our custom `md-to-pdf file.md`, over another method. On `PATH` everywhere
 
 ## Godot + Spine2D + Claude Setup
 
-**Read `~/spine-godot-setup/MANUAL.md` first** on any Godot/Spine/spine-godot task — installed paths, `godot-new` scaffolder, MCP wiring, version rules. Domain truths (spine-godot API, MCP gotchas, export pipeline) live in `~/spine-godot-setup/knowledge/`; read the relevant file before Spine/MCP work and commit new discoveries there, not in a project's CLAUDE.md.
-
-- Repo: https://github.com/jfdg01/spine-godot-setup (`~/spine-godot-setup`) — `./setup.sh` rebuilds it on any Ubuntu box. Research: `~/spine-godot-setup/RESEARCH.md`.
-- Pinned (all Spine major.minor **4.3**): Godot **4.7-stable**, spine-godot runtime **4.3**, Spine editor **4.3.23 Professional** (paid, not redistributable).
-- Edition is **Spine Pro** — Pro-only features available: meshes, weights, IK/transform/path/physics constraints, **sliders** (4.3). Verify: `~/Spine/Spine.sh -v` prints version + edition.
-- Claude↔Godot = `godot_ai` MCP (hi-godot/godot-ai, HTTP `127.0.0.1:8000/mcp`, needs `uv`, editor open). Claude↔Spine = Spine CLI `~/Spine/Spine.sh` (no MCP). Spine→Godot = 4.3 GDExtension, force reimport.
-- Keep Spine editor + exports + spine-godot on **4.3.x**; JSON exports use `.spine-json` (never `.json`), prefer binary `.skel`.
+Working on a Godot / Spine2D / spine-godot project? **ALWAYS read `~/.claude/godot-spine.md` first.** Everything — paths, pinned versions, MCP wiring, export rules — is there.

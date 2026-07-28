@@ -58,6 +58,7 @@ do_fonts() {
 do_claude() {
   msg "Linking Claude Code config (shared across every machine)"
   link config/claude/CLAUDE.md              ~/.claude/CLAUDE.md
+  link config/claude/godot-spine.md         ~/.claude/godot-spine.md
   link config/claude/settings.json          ~/.claude/settings.json
   link config/claude/statusline-command.sh  ~/.claude/statusline-command.sh
   link config/claude/commands               ~/.claude/commands
@@ -83,6 +84,15 @@ do_claude() {
   else
     echo "SKIP: claude CLI not found — plugins load from settings.json on launch"
   fi
+}
+
+do_editor() {
+  msg "Linking editor config (VS Code + prettier)"
+  # prettier: proseWrap never, so markdown stays one line per paragraph and
+  # VS Code soft-wraps it. Lives at $HOME so every repo without its own
+  # .prettierrc inherits it.
+  link config/prettierrc                    ~/.prettierrc
+  link config/vscode/settings.json          ~/.config/Code/User/settings.json
 }
 
 do_alias() {
@@ -113,8 +123,9 @@ do_gnome() {
 
 case "${1:-all}" in
   claude)  do_claude ;;
-  all)     do_herdr; do_fonts; do_claude; do_alias; do_gnome ;;
-  *)       echo "usage: $0 [all|claude]" >&2; exit 2 ;;
+  editor)  do_editor ;;
+  all)     do_herdr; do_fonts; do_claude; do_editor; do_alias; do_gnome ;;
+  *)       echo "usage: $0 [all|claude|editor]" >&2; exit 2 ;;
 esac
 
 msg "Done. Restart the terminal and relaunch claude to pick everything up."
