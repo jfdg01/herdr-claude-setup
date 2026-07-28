@@ -53,3 +53,7 @@ Prefer our custom `md-to-pdf file.md`, over another method. On `PATH` everywhere
 ## Godot + Spine2D + Claude Setup
 
 Working on a Godot / Spine2D / spine-godot project? **ALWAYS read `~/.claude/godot-spine.md` first.** Everything — paths, pinned versions, MCP wiring, export rules — is there.
+
+## On user run commands
+
+When handing a command to the user, `xclip` it to their clipboard as well as showing it to them, don't suggest running with claude's `!` directive since it's faulty.
