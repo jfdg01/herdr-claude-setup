@@ -1,192 +1,138 @@
 # Global Claude Instructions
 
-Single source of truth for every machine. Lives in `herdr-claude-setup` and is
-symlinked to `~/.claude/CLAUDE.md` — edit it here, not there.
+Source of truth for every machine. Lives in `herdr-claude-setup`, symlinked to
+`~/.claude/CLAUDE.md` — edit here, not there.
 
 ## Git Workflow (mandatory)
 
-Mandatory cycle for **any** change (feature/fix/whatever) in a git repo:
+Every change in a git repo:
 
-1. **Start from a clean `main`.** If `git status` is not clean, **STOP and notify
-   the user** — touch nothing. If clean: `git checkout main && git pull`.
-2. **Own branch:** `git checkout -b feat/<whatever>`. Never work directly on `main`.
-3. **Changes + iterative commits** on the branch (as many as needed, or none if N/A).
-4. **Close onto `main`:** 1 commit → fast-forward merge; several → squash into one.
-   Then push and delete the branch. A new cycle starts from step 1.
+1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch
+   nothing. Clean → `git checkout main && git pull`.
+2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
+3. **Commit iteratively** on the branch.
+4. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. Push,
+   delete branch. Next change restarts at step 1.
 
 `main` is always deployable.
 
 ## Agent fan-out budget
 
-**Max 6 agents per fan-out.** Applies to Workflow scripts and parallel `Agent`
-calls alike — count total agents across the whole run, not per stage (a nested
-`parallel` inside a `pipeline` multiplies invisibly: one planning question once
-cost 51 agents / 2.3M tokens). Need more? Ask first, or run sequentially.
+**Max 6 agents per fan-out**, counted across the whole run, not per stage —
+`parallel` nested in `pipeline` multiplies invisibly (one planning question cost
+51 agents / 2.3M tokens). Need more? Ask first, or run sequentially.
 
 ## Context & Token Hygiene (mandatory)
 
-**Why:** every API request re-reads the entire context at the cache-read rate,
-and a working session makes thousands of them. Measured across 1,023
-transcripts on the 3090 box (2026-07, **$5,239**): cost per request climbs from
-**$87 per 1k requests** at 25-50k context to **$164** at 175-200k — about
-**$0.51 per 1k requests for every 1k tokens** parked in context. Context grows
-only ~900 tokens per request (median), so compaction is cheap and *carrying*
-context is not. That single fact drives all the rules below.
+**Why:** every request re-reads the whole context at cache-read rate. Measured
+over 1,023 transcripts (3090 box, 2026-07, $5,239): **$87 per 1k requests** at
+25-50k context vs **$164** at 175-200k ≈ **$0.51 per 1k requests per 1k tokens
+parked**. Context grows only ~900 tok/request, so compaction is cheap and
+*carrying* context is not.
 
-**How the window actually splits** (run `/context` to see it for real):
+**Window split** (`/context` shows the real numbers):
 
 ```
 W  =  overhead O  +  33k autocompact reserve  +  messages
 ```
 
-`O` = system prompt + tools + custom agents + memory files + skills. It is
-paid on every request and is invisible until you look. So working room is
-`R = W − 33k − O`, and the post-compact base is `B ≈ O + 23k`
-(138 observed resets at W=110k; B is *not* a fixed fraction of W and *not* a
-constant).
+`O` = system prompt + tools + custom agents + `CLAUDE.md` files + `MEMORY.md` +
+skills; paid every request. Working room `R = W − 33k − O`; post-compact base
+`B ≈ O + 23k` (138 resets at W=110k; not a fixed fraction of W).
 
-**"Memory files" in that row means the always-on `CLAUDE.md` files plus
-`MEMORY.md` — not the memory directory.** Measured on jetson 2026-07-26:
-`~/.claude/CLAUDE.md` 4.1k + project `CLAUDE.md` 5.3k + `MEMORY.md` 936 = 10.3k;
-the 17 individual memory files cost **zero** until one is recalled. Note also
-that `/context` lists deferred tools (16.5k) and MCP (308) in the breakdown but
-**excludes them from the total** — they load on demand. Read the total, not the
-sum of the rows.
+The memory *directory* is not resident — individual files cost zero until
+recalled. Jetson 2026-07-26: `~/.claude/CLAUDE.md` 4.1k + project `CLAUDE.md`
+5.3k + `MEMORY.md` 936 = 10.3k. `/context` lists deferred tools (16.5k) and MCP
+(308) but **excludes them from the total** — read the total, not the row sum.
 
-The reserve is a **flat 33k, not 30% of W** — it reads as 30% only because it
-was first measured at W=110k. From the CLI bundle: `min(max_output_tokens,
-20000) + 13000`, independent of window size. It is shown as "Autocompact
-buffer" in `/context` only when autocompact is **on** *and* the window comes
-from an explicit `autoCompactWindow` setting; with autocompact off the reserve
-drops to a flat 3k ("Compact buffer"), and with the window left on `auto` the
-row is hidden entirely.
+Reserve is a **flat 33k** (`min(max_output_tokens, 20000) + 13000`), not 30% of
+W. Shown as "Autocompact buffer" only when autocompact is on *and* the window
+comes from an explicit `autoCompactWindow`; autocompact off → flat 3k "Compact
+buffer"; window on `auto` → row hidden.
 
-1. **Never dump raw search output into main context.** Tighten the command
-   first — `grep -l` / `-c` / `head -50` instead of full matches, `Read` with
-   `offset`/`limit` instead of whole files. A 46k dump costs ~4.6k *per
-   subsequent request*.
-2. **Route open-ended sweeps through a subagent.** "Where is X", "what calls
-   Y", "map this directory", "does this pattern appear anywhere" → `Explore`
-   or `caveman:cavecrew-investigator`. They read the files and return a
-   `file:line` digest; the bulk never enters main context. Break-even is ~7
-   requests, so this is a win on anything non-trivial.
+1. **Never dump raw search output into main context.** Tighten first: `grep -l`
+   / `-c` / `head -50`, `Read` with `offset`/`limit`. A 46k dump costs ~4.6k
+   *per subsequent request*.
+2. **Route open-ended sweeps through a subagent.** "Where is X", "what calls Y",
+   "map this directory", "does this pattern appear anywhere" → `Explore` or
+   `caveman:cavecrew-investigator`; they return a `file:line` digest, bulk never
+   enters main context. Break-even ~7 requests.
 3. **`/clear` on task switch, `/compact` only mid-task.** Compaction is cheap
-   (summary output ~1.4k); carrying a stale 100k context is the expensive
-   thing, not resetting it. Autocompact stays **on** — it is the safety net
-   that stops a session drifting up to the model's 1M limit, which is the most
-   expensive place to be. If it fires so often a session feels unusable, that
-   is rule 5 talking, not a reason to disable it.
+   (~1.4k summary); a stale 100k context is not. Autocompact stays **on** — it
+   stops a session drifting to the 1M limit, the most expensive place to be.
 4. **Cut overhead before touching `autoCompactWindow`.** A token of `O` removed
-   buys a full token of room *and* comes off every request's bill; a token of
-   window buys only 0.70 of a token and *adds* to the bill. Raising the window
-   "to avoid compaction" is a false economy — compaction is cheap. `W` stays
-   **143k** on every box, which is the old 110k target plus the flat 33k
-   reserve — same ~110k of real room, and average live context at ~74k, the top
-   of the cheap band. There is also a hard floor: below `W = O + 33k` a session
-   compacts on turn one, forever (jetson `O` = **32.5k** measured 2026-07-26 →
-   floor **65.5k**), and it gets unusable well before that. The setting itself
-   is clamped to [100k, 1M]. Jetson was found at 163k on 2026-07-26 and
-   reverted — if a box drifts off 143k, put it back rather than documenting
-   the drift.
-5. **Prune memories for staleness, never for size.** The memory *directory* is
-   **not** resident — only `MEMORY.md` is (936 tok on jetson), and the
-   individual files arrive on recall. An earlier version of this rule claimed
-   "18 files = 19.9k tokens = 48% of `O` ≈ $64 per conversation"; re-measured
-   2026-07-26 that is wrong by ~21×, so **deleting memories to save tokens
-   saves nothing**. What a stale memory costs instead is a session acting on a
-   fact that has rotted: `reference-key-docs` cited `results/` for weeks after
-   it was renamed `experiments/`. So audit them — every path still exists,
-   every ID still resolves — and delete on *wrongness*, not on length. The one
-   part of the old rule that holds: keep project `CLAUDE.md` under ~5k tokens,
-   because that file really is on every request.
-
-   Skills are near-unrecoverable, so do not go hunting there either: plugins
-   carry their own `SessionStart` hooks, so disabling `caveman` or `ponytail`
-   to reclaim ~840 tok also turns the mode off. What is actually left to cut
-   after the `CLAUDE.md` files is small; `Messages` runs about 2× all of `O` in
-   a working session, which makes rule 3 the real lever.
-6. **Pick the subagent model per stage.** Measured cost per agent: `sonnet-4-6
-   $0.88`, `haiku-4-5 $1.17`, `opus-4-8 $3.55`, `opus-5 $4.10`, `fable-5
-   $10.28`. Sonnet for finders, scanners, verifiers and mechanical stages;
-   inherited Opus for **any stage whose output gates real spend** —
-   experiment/plan design, adversarial critique, final synthesis — not only
-   the last one; **Fable only when explicitly asked** — it is ~12× a Sonnet
-   agent. The ~$3 delta is a *large*-fan-out rule: the per-agent multiplier
-   dominates at 228 agents, not in a workflow of **under ~8** with a few
-   judgment-heavy stages, where one wrong design decision burns a multi-day
-   experiment run. Gate the model on **what the stage's output authorizes**,
-   not on its position in the pipeline. Effort: `high` on Sonnet reasoning
-   agents, `low` on mechanical stages (grep, collect, transform) where high
-   effort only buys extra tool calls.
-   **In `Workflow` scripts, write `{model: 'sonnet', effort: 'low'}` on every
-   `agent()` call by default** — omitting `model` means `inherit`, so an
-   `opus[1m]` session silently fans out Opus agents at ~4.7× the cost, and an
-   ultracode run is where that multiplies. Raise a stage off the default only
-   deliberately: `effort: 'high'` for a stage that must reason, `model` left
-   off (inherit) for the spend-gating stages above — design, adversarial
-   critique, synthesis — not only for final synthesis. This is a
-   `Workflow`-only rule — plain `Agent` calls (Explore, forks, one-off
-   investigators) keep inheriting the session model.
-7. **Keep subagent prompts small.** Subagents average 41k context, p90 88k.
-   They inherit whatever you hand them; hand them less. **In the long sessions
-   the fanout is the majority of the bill, not the conversation:** across the
-   14 biggest sessions on record the split is main 54% / subagents 46%, and in
-   the single largest (`jetson/390e9ce7`, $1,620) it is 45% / 55% — 228 agents
-   at 70k average context, none on a cheap model. Tier the models before
-   touching any window setting.
-8. **Fan out wide, verify narrow.** Within the 6-agent budget above, spend it
-   on distinct lenses, not redundant refuters. Verification cost is
-   `findings × voters` and explodes; 2-3 lenses is enough.
-9. **Never switch the main-loop model to save money.** A model switch
-   invalidates the prompt cache and costs more than it saves. Spawn a cheaper
-   subagent instead.
+   buys a full token of room *and* comes off every bill; a token of window buys
+   0.70 and *adds* to the bill. `W` stays **143k** on every box (110k real room
+   + 33k reserve; average live context ~74k). Hard floor: below `W = O + 33k`
+   every session compacts on turn one (jetson `O` = 32.5k → floor 65.5k), and it
+   is unusable well before that. Setting clamps to [100k, 1M]. A box drifted off
+   143k → put it back.
+5. **Prune memories for staleness, never for size.** Deleting memories saves
+   nothing (only `MEMORY.md` is resident). A stale memory costs a session acting
+   on a rotted fact — `reference-key-docs` cited `results/` for weeks after it
+   became `experiments/`. Audit: every path exists, every ID resolves; delete on
+   *wrongness*. Keep project `CLAUDE.md` under ~5k tokens — that one is on every
+   request. Don't hunt in skills either: plugins carry `SessionStart` hooks, so
+   disabling `caveman`/`ponytail` to reclaim ~840 tok also turns the mode off.
+   `Messages` runs ~2× all of `O`, so rule 3 is the real lever.
+6. **Pick the subagent model per stage.** Cost per agent: `sonnet-4-6 $0.88`,
+   `haiku-4-5 $1.17`, `opus-4-8 $3.55`, `opus-5 $4.10`, `fable-5 $10.28`. Sonnet
+   for finders, scanners, verifiers, mechanical stages. Inherited Opus for **any
+   stage whose output gates real spend** — experiment/plan design, adversarial
+   critique, synthesis — not just the last one. **Fable only when explicitly
+   asked** (~12× a Sonnet agent). Gate on what the stage's output authorizes,
+   not its position. Effort `high` on Sonnet reasoning stages, `low` on
+   mechanical ones (grep, collect, transform) where high effort only buys extra
+   tool calls.
+   **In `Workflow` scripts write `{model: 'sonnet', effort: 'low'}` on every
+   `agent()` call by default** — omitted `model` means `inherit`, so an
+   `opus[1m]` session silently fans out Opus at ~4.7× cost. Raise off the
+   default only deliberately. `Workflow`-only rule — plain `Agent` calls
+   (Explore, forks, one-off investigators) keep inheriting the session model.
+7. **Keep subagent prompts small.** Subagents average 41k context, p90 88k; they
+   inherit what you hand them. Across the 14 biggest sessions the split is main
+   54% / subagents 46%; in the largest (`jetson/390e9ce7`, $1,620) 45% / 55% —
+   228 agents at 70k average, none cheap. Tier models before touching any window
+   setting.
+8. **Fan out wide, verify narrow.** Spend the 6-agent budget on distinct lenses,
+   not redundant refuters. Verification cost is `findings × voters`; 2-3 lenses
+   is enough.
+9. **Never switch the main-loop model to save money.** The switch invalidates
+   the prompt cache and costs more than it saves. Spawn a cheaper subagent.
 
 ## Python Projects
 
-- **Always use `uv`** for every Python project — environment creation, Python version management, dependency installation, and running scripts. Do **not** use bare `pip`, `python -m venv`, `pyenv`, `virtualenv`, `poetry`, `pipenv`, or `conda`.
-- **If `uv` is not installed**, install it first (then carry on):
-  ```bash
-  curl -LsSf https://astral.sh/uv/install.sh | sh   # or: pipx install uv / brew install uv
-  ```
-- **Always work inside a project-local virtual environment.** Never install packages globally. uv creates and uses `.venv/` in the project automatically.
-- Standard setup for any new Python project:
-  ```bash
-  uv init --python 3.12        # creates pyproject.toml + .python-version (pins the version)
-  uv venv                      # creates the project-local .venv
-  uv add <packages>            # adds deps to pyproject.toml AND installs them
-  ```
-- Day-to-day usage:
-  ```bash
-  uv add <pkg>                 # add a dependency (use `uv add --dev <pkg>` for dev-only)
-  uv remove <pkg>              # remove a dependency
-  uv sync                      # install/lock everything from pyproject.toml + uv.lock
-  uv run <cmd>                 # run a command/script inside the venv (no manual activation needed)
-  ```
-- **Track dependencies in `pyproject.toml`** and commit the `uv.lock` lockfile for reproducible installs.
-- Add `.venv/` to `.gitignore` if not already present.
+**Always `uv`** — env creation, Python version, deps, running scripts. Never
+bare `pip`, `python -m venv`, `pyenv`, `virtualenv`, `poetry`, `pipenv`,
+`conda`. Never install globally; uv uses project-local `.venv/`. Add `.venv/` to
+`.gitignore`. Commit `uv.lock`; deps live in `pyproject.toml`.
 
-## Markdown to PDF Conversion
-
-Always use the `md-to-pdf` launcher to convert `.md` files to PDF. Never use
-other methods. It is on `PATH` on every machine (`~/.local/bin/md-to-pdf` ->
-`~/md-to-pdf/src/md-to-pdf`) and runs the converter inside that repo's own venv.
+Not installed: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
 ```bash
-md-to-pdf file.md
+uv init --python 3.12   # pyproject.toml + .python-version
+uv venv                 # project-local .venv
+uv add <pkg>            # add dep (--dev for dev-only); uv remove to drop
+uv sync                 # install/lock from pyproject.toml + uv.lock
+uv run <cmd>            # run inside the venv, no activation
 ```
+
+## Markdown to PDF
+
+Always `md-to-pdf file.md`, never another method. On `PATH` everywhere
+(`~/.local/bin/md-to-pdf` -> `~/md-to-pdf/src/md-to-pdf`), runs inside that
+repo's own venv.
 
 ## Godot + Spine2D + Claude Setup
 
-Reproducible game-dev rig. **Read `~/spine-godot-setup/MANUAL.md` first** on any
-Godot/Spine/spine-godot task — it has the installed paths, the `godot-new`
-scaffolder, MCP wiring and version rules. Domain truths (spine-godot API, MCP
-gotchas, export pipeline) live in `~/spine-godot-setup/knowledge/`; read the
-relevant file before Spine/MCP work and commit new discoveries there, not in a
-project's CLAUDE.md.
+**Read `~/spine-godot-setup/MANUAL.md` first** on any Godot/Spine/spine-godot
+task — installed paths, `godot-new` scaffolder, MCP wiring, version rules.
+Domain truths (spine-godot API, MCP gotchas, export pipeline) live in
+`~/spine-godot-setup/knowledge/`; read the relevant file before Spine/MCP work
+and commit new discoveries there, not in a project's CLAUDE.md.
 
-- Repo: https://github.com/jfdg01/spine-godot-setup (`~/spine-godot-setup`) — `./setup.sh` rebuilds it on any Ubuntu box.
-- Architecture + integration research: `~/spine-godot-setup/RESEARCH.md`.
-- Pinned versions (all Spine major.minor **4.3**): Godot **4.7-stable**, spine-godot runtime **4.3**, Spine editor **4.3.23 Professional** (paid, not redistributable).
-- Edition is **Spine Pro**, not Essential — assume Pro-only features are available: meshes, weights, IK/transform/path/physics constraints, and **sliders** (4.3, Pro-only). Verify with `~/Spine/Spine.sh -v`, which prints the version + edition.
-- Claude↔Godot = `godot_ai` MCP (hi-godot/godot-ai, HTTP `127.0.0.1:8000/mcp`, needs `uv`, editor must be open). Claude↔Spine = Spine CLI `~/Spine/Spine.sh` (no MCP). Spine→Godot = 4.3 GDExtension, force reimport.
-- Rule: keep Spine editor + exports + spine-godot all on **4.3.x**; JSON exports use `.spine-json` (never `.json`), prefer binary `.skel`.
+- Repo: https://github.com/jfdg01/spine-godot-setup (`~/spine-godot-setup`) — `./setup.sh` rebuilds it on any Ubuntu box. Research: `~/spine-godot-setup/RESEARCH.md`.
+- Pinned (all Spine major.minor **4.3**): Godot **4.7-stable**, spine-godot runtime **4.3**, Spine editor **4.3.23 Professional** (paid, not redistributable).
+- Edition is **Spine Pro** — Pro-only features available: meshes, weights, IK/transform/path/physics constraints, **sliders** (4.3). Verify: `~/Spine/Spine.sh -v` prints version + edition.
+- Claude↔Godot = `godot_ai` MCP (hi-godot/godot-ai, HTTP `127.0.0.1:8000/mcp`, needs `uv`, editor open). Claude↔Spine = Spine CLI `~/Spine/Spine.sh` (no MCP). Spine→Godot = 4.3 GDExtension, force reimport.
+- Keep Spine editor + exports + spine-godot on **4.3.x**; JSON exports use `.spine-json` (never `.json`), prefer binary `.skel`.
