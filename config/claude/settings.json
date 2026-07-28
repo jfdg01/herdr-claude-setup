@@ -22,6 +22,7 @@
     "baseRef": "fresh"
   },
   "enableArtifact": false,
+  "enableWorkflows": false,
   "statusLine": {
     "type": "command",
     "command": "bash /home/gara/.claude/statusline-command.sh"
@@ -45,7 +46,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "autoCompactWindow": 143000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
