@@ -75,15 +75,15 @@ buffer"; window on `auto` → row hidden.
    request. Don't hunt in skills either: plugins carry `SessionStart` hooks, so
    disabling `caveman`/`ponytail` to reclaim ~840 tok also turns the mode off.
    `Messages` runs ~2× all of `O`, so rule 3 is the real lever.
-6. **Pick the subagent model per stage.** Cost per agent: `sonnet-4-6 $0.88`,
-   `haiku-4-5 $1.17`, `opus-4-8 $3.55`, `opus-5 $4.10`, `fable-5 $10.28`. Sonnet
+6. **Pick the subagent model per stage.** Use only `sonnet-5`, `haiku-4-5` and
+   `opus-5`. Never `fable-5`, never `opus-4-8` — opus-5 beats both. Cost per
+   agent: `haiku-4-5 $1.17`, `opus-5 $4.10`; sonnet-5 not yet measured. Sonnet
    for finders, scanners, verifiers, mechanical stages. Inherited Opus for **any
    stage whose output gates real spend** — experiment/plan design, adversarial
-   critique, synthesis — not just the last one. **Fable only when explicitly
-   asked** (~12× a Sonnet agent). Gate on what the stage's output authorizes,
-   not its position. Effort `high` on Sonnet reasoning stages, `low` on
-   mechanical ones (grep, collect, transform) where high effort only buys extra
-   tool calls.
+   critique, synthesis — not just the last one. Gate on what the stage's output
+   authorizes, not its position. Effort `high` on Sonnet reasoning stages, `low`
+   on mechanical ones (grep, collect, transform) where high effort only buys
+   extra tool calls.
    **In `Workflow` scripts write `{model: 'sonnet', effort: 'low'}` on every
    `agent()` call by default** — omitted `model` means `inherit`, so an
    `opus[1m]` session silently fans out Opus at ~4.7× cost. Raise off the
