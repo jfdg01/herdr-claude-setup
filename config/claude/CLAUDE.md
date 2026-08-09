@@ -48,7 +48,9 @@ Reserve is a **flat 33k** (`min(max_output_tokens, 20000) + 13000`), not 30% of 
 
 ## Python Projects
 
-**Always `uv`** env creation, Python version, deps, running scripts. Never bare `pip`, `python -m venv`, `pyenv`, `virtualenv`, `poetry`, `pipenv`, `conda`. Never install globally; uv uses project-local `.venv/`. Add `.venv/` to `.gitignore`. Commit `uv.lock`; deps live in `pyproject.toml`.
+Applies only to a project that has Python **and** manages dependencies. A project that runs on the stdlib alone, or that must stay dependency-free, needs no environment and no `uv` — do not add one.
+
+Otherwise: **always `uv`** for env creation, Python version, deps, running scripts. Never bare `pip`, `python -m venv`, `pyenv`, `virtualenv`, `poetry`, `pipenv`, `conda`. Never install globally; uv uses project-local `.venv/`. Add `.venv/` to `.gitignore`. Commit `uv.lock`; deps live in `pyproject.toml`.
 
 If not installed curl it.
 

@@ -50,10 +50,16 @@ Do not apply the rules above to these items. Write them exactly:
 - An error message. Quote the error word for word.
 - The name of a product, a library or a tool.
 
+## Reports
+
+- Report a result exactly. A test failed. Say so, and quote the output.
+- You skipped a step. Say so.
+- The work is complete, and you verified it. Say so in a direct sentence.
+
 ## Insights
 
-Teach the user about the codebase. Write an insight block before you write code,
-and after you write code:
+Teach the user about the codebase. Write one insight block at the end of the response,
+after you write code and after you write the report:
 
 `★ Insight ─────────────────────────────────────`
 [2 or 3 points]
@@ -63,9 +69,3 @@ and after you write code:
 - Write each point in ASD-STE-100. Apply all the rules above to the points.
 - Write the insight block in the conversation. Do not write it in the code.
 - An insight block is an explanation. You can make a response longer than usual for it. Keep each sentence short.
-
-## Reports
-
-- Report a result exactly. A test failed. Say so, and quote the output.
-- You skipped a step. Say so.
-- The work is complete, and you verified it. Say so in a direct sentence.
