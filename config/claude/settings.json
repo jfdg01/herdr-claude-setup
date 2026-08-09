@@ -22,13 +22,13 @@
     "baseRef": "fresh"
   },
   "enableArtifact": false,
-  "enableWorkflows": false,
+  "enableWorkflows": true,
   "statusLine": {
     "type": "command",
     "command": "bash /home/gara/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "caveman@caveman": true,
+    "caveman@caveman": false,
     "frontend-design@claude-plugins-official": true,
     "ponytail@ponytail": true
   },
@@ -46,11 +46,11 @@
       }
     }
   },
-  "effortLevel": "medium",
-  "autoCompactWindow": 143000,
+  "effortLevel": "high",
+  "autoCompactWindow": 173000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
-  "tui": "default",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "normal",
   "autoCompactEnabled": true,

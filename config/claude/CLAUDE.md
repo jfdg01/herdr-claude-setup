@@ -18,6 +18,12 @@ Every change in a git repo:
 
 **Max 6 agents per fan-out**, counted across the whole run, not per stage — `parallel` nested in `pipeline` multiplies invisibly. Need more? Ask first.
 
+## Naming what I can see
+
+Nothing the reader has not seen may be referenced. Labels, option letters and codenames you invented while reasoning, or that came from a subagent, do not exist for me. Name the thing, not the label.
+
+Relay conclusions in your own words, and gloss any internal term inline on first use.
+
 ## Context & Token Hygiene (mandatory)
 
 **Why:** every request re-reads the whole context at cache-read rate. Per measure: compaction is cheap and _carrying_ context is not.

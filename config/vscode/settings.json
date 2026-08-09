@@ -8,13 +8,16 @@
   "chat.tips.enabled": false,
   "workbench.colorTheme": "Gruvbox Dark Medium",
   "[markdown]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "editor.fontFamily": "'JetBrains Mono', monospace",
   "editor.fontLigatures": true,
   "terminal.integrated.fontFamily": "'JetBrains Mono'",
   "workbench.editorAssociations": {
     "*.copilotmd": "vscode.markdown.preview.editor",
-    "*.mp4": "analyticsignal.preview-mp4"
-  }
+    "*.mp4": "analyticsignal.preview-mp4",
+  },
+  "explorer.confirmDelete": false,
+  "python.analysis.typeCheckingMode": "strict",
+  "claudeCode.preferredLocation": "panel",
 }
