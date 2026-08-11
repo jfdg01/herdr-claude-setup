@@ -27,9 +27,7 @@ else
   parts+=("$(printf '\033[38;2;232;160;180m%s\033[0m' "$model")")
 fi
 
-if [ -n "$style" ] && [ "$style" != "default" ]; then
-  parts+=("$(printf '\033[38;2;140;200;210m%s\033[0m' "$style")")
-fi
+parts+=("$(printf '\033[38;2;140;200;210m%s\033[0m' "${style:-default}")")
 
 if [ -n "$branch" ]; then
   parts+=("$(printf '\033[38;2;200;168;224m%s\033[0m' "$branch")")
