@@ -74,14 +74,15 @@ do_claude() {
 
   command -v jq >/dev/null || echo "WARN: install jq — the statusline needs it (sudo apt install jq)"
 
-  # settings.json declares the caveman + ponytail marketplaces and enables the
-  # plugins; Claude Code fetches them on next launch. Force it now if present.
+  # settings.json declares the marketplaces AND the per-plugin on/off flags;
+  # Claude Code installs from it on next launch. Pre-fetch the marketplaces
+  # only. `claude plugin install` is deliberately absent: it rewrites every
+  # named plugin to true in enabledPlugins, which silently re-enables the ones
+  # this repo turns off (caveman, frontend-design).
   if command -v claude >/dev/null; then
-    msg "Pre-fetching Claude plugins (caveman, ponytail)"
+    msg "Pre-fetching plugin marketplaces (caveman, ponytail)"
     claude plugin marketplace add JuliusBrussee/caveman 2>/dev/null || true
     claude plugin marketplace add DietrichGebert/ponytail 2>/dev/null || true
-    claude plugin install caveman@caveman ponytail@ponytail 2>/dev/null || \
-      echo "NOTE: plugins install on next 'claude' launch via settings.json"
   else
     echo "SKIP: claude CLI not found — plugins load from settings.json on launch"
   fi
