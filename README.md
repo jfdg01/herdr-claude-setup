@@ -20,7 +20,8 @@ the repo and `git diff` is the drift detector.
   - **slash commands** (`config/claude/commands/`) — `/new-doc`, `/open-terminal`.
   - **caveman** + **ponytail** plugins (terse output, laziest-that-works),
     plus `frontend-design`.
-  - custom **statusline** — `user@cwd`, model/effort, git branch, token count
+  - custom **statusline** — `user@cwd`, model/effort, output style (hidden when
+    `default`), git branch, token count
     with % to autocompact (read live from `settings.json`, project override
     first), and 5h/weekly usage.
   - **autocompact** enabled, **143k** window. It reserves a flat **33k** (not a

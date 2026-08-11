@@ -5,6 +5,7 @@ model=$(echo "$input" | jq -r '.model.display_name // "unknown"')
 model=${model%% (*}  # strip " (1M context)" etc.
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // "?"')
 effort=$(echo "$input" | jq -r '.effort.level // empty')
+style=$(echo "$input" | jq -r '.output_style.name // empty')
 
 tokens=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
 # ponytail: only checks $cwd, not parent dirs; walk up if you start nesting settings
@@ -24,6 +25,10 @@ if [ -n "$effort" ]; then
   parts+=("$(printf '\033[38;2;232;160;180m%s/%s\033[0m' "$model" "$effort")")
 else
   parts+=("$(printf '\033[38;2;232;160;180m%s\033[0m' "$model")")
+fi
+
+if [ -n "$style" ] && [ "$style" != "default" ]; then
+  parts+=("$(printf '\033[38;2;140;200;210m%s\033[0m' "$style")")
 fi
 
 if [ -n "$branch" ]; then
