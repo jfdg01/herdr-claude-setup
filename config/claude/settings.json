@@ -29,7 +29,7 @@
   },
   "enabledPlugins": {
     "caveman@caveman": false,
-    "frontend-design@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": false,
     "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
@@ -46,11 +46,17 @@
       }
     }
   },
+  "outputStyle": "STE Explanatory",
+  "language": "English",
   "effortLevel": "high",
   "autoCompactWindow": 173000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "normal",
   "autoCompactEnabled": true,
@@ -58,5 +64,5 @@
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "outputStyle": "STE Explanatory"
+  "voiceEnabled": true
 }
