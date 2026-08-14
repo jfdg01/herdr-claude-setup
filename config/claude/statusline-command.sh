@@ -21,7 +21,7 @@ branch=$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" symbolic-ref --short HEAD 2>/dev/nul
 
 parts=()
 
-parts+=("$(printf '\033[38;2;244;197;106m%s@%s\033[0m' "$(whoami)" "$cwd")")
+parts+=("$(printf '\033[38;2;244;197;106m%s@%s\033[0m' "$(hostname -s)" "$cwd")")
 
 if [ -n "$effort" ]; then
   parts+=("$(printf '\033[38;2;232;160;180m%s/%s\033[0m' "$model" "$effort")")
