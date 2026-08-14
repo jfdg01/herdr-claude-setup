@@ -16,6 +16,8 @@ compact_threshold=$((compact_window - 33000))
 compact_pct=$(echo "$tokens $compact_threshold" | awk '{printf "%.0f", $1/$2*100}')
 
 branch=$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null)
+# untracked counts as dirty, same as the workflow's "git status not clean" gate
+[ -n "$branch" ] && [ -n "$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" status --porcelain 2>/dev/null)" ] && branch="$branch*"
 
 parts=()
 
