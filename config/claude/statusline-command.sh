@@ -33,6 +33,9 @@ parts+=("$(printf '\033[38;2;140;200;210m%s\033[0m' "${style:-default}")")
 
 if [ -n "$branch" ]; then
   parts+=("$(printf '\033[38;2;200;168;224m%s\033[0m' "$branch")")
+else
+  # detached HEAD also lands here: symbolic-ref fails, and "no git" is close enough
+  parts+=("$(printf '\033[3;38;2;200;168;224mno git\033[0m')")
 fi
 
 parts+=("$(printf '\033[38;2;168;196;232m%s (%s%%)\033[0m' "$tokens" "$compact_pct")")
