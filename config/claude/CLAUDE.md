@@ -9,10 +9,24 @@ Every change in a git repo:
 1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch nothing. Clean → `git checkout main && git pull`.
 2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
 3. **Commit iteratively** on the branch.
-4. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch.
-5. Push only if instructed. Next change restarts at step 1.
+4. **Review gate — I read the diff before it lands.** Push the branch and hand me the compare link, then **stop and wait**:
+
+   ```bash
+   git push -u origin HEAD
+   echo "$(gh repo view --json url -q .url)/compare/main...$(git branch --show-current)"
+   ```
+
+   I reply **approved**, or I tell you what to change. Changes → back to step 3, push again, new link. Loop until I say approved.
+
+   - **Never close onto `main` without that word.** Silence is not approval.
+   - **No shortcut skips this.** `fc` and any other "do the whole cycle" alias stops here too.
+   - No GitHub remote or no `gh` → give me `git diff main..HEAD | delta -s` instead and still wait.
+5. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch.
+6. Push `main` only if instructed. Next change restarts at step 1.
 
 `main` is always deployable.
+
+**Why step 4 exists:** I went hands-off and the quality rotted. The link is where I get back in. Treat it as the expensive step, not a formality.
 
 ## Agent fan-out budget
 

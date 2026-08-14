@@ -48,7 +48,6 @@
   },
   "outputStyle": "STE Explanatory",
   "language": "English",
-  "effortLevel": "high",
   "autoCompactWindow": 173000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
@@ -64,5 +63,6 @@
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "effortLevel": "xhigh"
 }
