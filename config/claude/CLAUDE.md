@@ -8,7 +8,7 @@ Every change in a git repo:
 
 1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch nothing. Clean → `git checkout main && git pull`.
 2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
-3. **Commit iteratively** on the branch.
+3. **Commit iteratively** on the branch. Read the branch name before every commit — it can move under you between my words. On `main`? Stop and say so.
 4. **Review gate — I read every commit before it lands.** Approval is **per commit**, not per branch. Push, hand me the link to the new commit, then **stop and wait**:
 
    ```bash
@@ -16,10 +16,12 @@ Every change in a git repo:
    echo "$(gh repo view --json url -q .url)/commit/$(git rev-parse HEAD)"
    ```
 
-   I reply **approved**, or I tell you what to change. Changes → back to step 3, and the fix is a **new commit**: push it and hand me *that* commit's link. Never a compare link — it re-renders what I already read. Loop until every commit is approved.
+   I reply **approved**, or I tell you what to change. Changes → back to step 3, and the fix is a **new commit**: push it and hand me *that* commit's link. Never a compare link — it re-renders what I already read. Loop until no line that will land carries a **no** from me, or no word at all.
 
    - **Several new commits since my last word?** One link each, oldest first, naming the files each one touches.
    - **A fix that rewrites an already-approved commit:** say so, and offer the full diff. That is the one case where rereading is the point.
+   - **A fix on top of a commit I rejected:** name the commit it replaces. That commit needs no yes of its own — step 6 squashes the branch, so a line I rejected reaches no tree I keep. The replacement needs the word. Part of the rejected commit survives into the end state? Name that part, and ask for a word on it alone. Never let it ride on the fix.
+   - **Amend, or a commit on top?** Small, local fix → on top. The commit is wrong as a whole → amend it, force-push the branch, hand the new link. Nothing in it was approved, so no reread happens, and a commit on top would hand me a diff of a diff. Test: does the fix read on its own?
    - **Never close onto `main` without that word.** Silence is not approval.
    - **No shortcut skips this.** `fc` and any other "do the whole cycle" alias stops here too.
    - No GitHub remote or no `gh` → give me `git show HEAD | delta -s` instead and still wait.
@@ -32,6 +34,8 @@ Every change in a git repo:
 **Why step 4 exists:** I went hands-off and the quality rotted. The link is where I get back in. Treat it as the expensive step, not a formality.
 
 **Why per commit:** a compare link grows every time you push a fix, so asking for one change made me reread everything I had already approved. Reviewing costs attention, and rereading spends it on nothing. One commit, one link, one decision.
+
+**Why the line test:** a commit is how lines reach me for one read. It is not a unit of consent. A commit I rejected can never earn a yes — every fix is a new commit — so "loop until every commit is approved" deadlocks. Lines land, SHAs do not.
 
 ## Agent fan-out budget
 
