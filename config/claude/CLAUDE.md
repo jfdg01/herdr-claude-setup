@@ -23,7 +23,7 @@ Every change in a git repo:
    - **Never close onto `main` without that word.** Silence is not approval.
    - **No shortcut skips this.** `fc` and any other "do the whole cycle" alias stops here too.
    - No GitHub remote or no `gh` → give me `git show HEAD | delta -s` instead and still wait.
-5. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch.
+5. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch. **The commit that closes gets no link.** Its content is what I already approved, so handing it over is a reread with nothing new in it — that is the busy work step 4 exists to stop, not to create. Exception: a conflict you resolved by hand *is* new content and gets its link. Report the close, do not ask about it.
 6. Push `main` only if instructed. Next change restarts at step 1.
 
 `main` is always deployable.
