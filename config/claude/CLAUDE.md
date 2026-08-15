@@ -9,24 +9,28 @@ Every change in a git repo:
 1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch nothing. Clean → `git checkout main && git pull`.
 2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
 3. **Commit iteratively** on the branch.
-4. **Review gate — I read the diff before it lands.** Push the branch and hand me the compare link, then **stop and wait**:
+4. **Review gate — I read every commit before it lands.** Approval is **per commit**, not per branch. Push, hand me the link to the new commit, then **stop and wait**:
 
    ```bash
    git push -u origin HEAD
-   echo "$(gh repo view --json url -q .url)/compare/main...$(git branch --show-current)"
+   echo "$(gh repo view --json url -q .url)/commit/$(git rev-parse HEAD)"
    ```
 
-   I reply **approved**, or I tell you what to change. Changes → back to step 3, push again, new link. Loop until I say approved.
+   I reply **approved**, or I tell you what to change. Changes → back to step 3, and the fix is a **new commit**: push it and hand me *that* commit's link. Never a compare link — it re-renders what I already read. Loop until every commit is approved.
 
+   - **Several new commits since my last word?** One link each, oldest first, naming the files each one touches.
+   - **A fix that rewrites an already-approved commit:** say so, and offer the full diff. That is the one case where rereading is the point.
    - **Never close onto `main` without that word.** Silence is not approval.
    - **No shortcut skips this.** `fc` and any other "do the whole cycle" alias stops here too.
-   - No GitHub remote or no `gh` → give me `git diff main..HEAD | delta -s` instead and still wait.
+   - No GitHub remote or no `gh` → give me `git show HEAD | delta -s` instead and still wait.
 5. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch.
 6. Push `main` only if instructed. Next change restarts at step 1.
 
 `main` is always deployable.
 
 **Why step 4 exists:** I went hands-off and the quality rotted. The link is where I get back in. Treat it as the expensive step, not a formality.
+
+**Why per commit:** a compare link grows every time you push a fix, so asking for one change made me reread everything I had already approved. Reviewing costs attention, and rereading spends it on nothing. One commit, one link, one decision.
 
 ## Agent fan-out budget
 
