@@ -27,7 +27,7 @@ Every change in a git repo:
    - No GitHub remote or no `gh` → give me `git show HEAD | delta -s` instead and still wait.
 5. **Restart what still runs the old code.** Approved, and the change does not reach a running process on its own — a server, a daemon, a watcher with no reload — restart it now, before you report. Use the project's own start script when it has one. Then say what you restarted and how you checked it answers. A page still serving the old code is a change I read as broken.
 6. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch. **The commit that closes gets no link.** Its content is what I already approved, so handing it over is a reread with nothing new in it — that is the busy work step 4 exists to stop, not to create. Exception: a conflict you resolved by hand *is* new content and gets its link. Report the close, do not ask about it.
-7. Push `main` only if instructed. Next change restarts at step 1.
+7. **Push `main`.** A step of its own, after the close. Never fold it into the merge; the merge is delicate and stands alone. Push, report the push, do not ask. Next change restarts at step 1.
 
 `main` is always deployable.
 
@@ -68,6 +68,10 @@ Reserve is a **flat 33k** (`min(max_output_tokens, 20000) + 13000`), not 30% of 
 3. **Prune memories for staleness, never for size.** Deleting memories saves nothing (only `MEMORY.md` is resident). A stale memory costs a session acting on a rotted fact. Audit: every path exists, every ID resolves; delete on _wrongness_. Keep project `CLAUDE.md` under ~5k tokens — that one is on every request. Don't hunt in skills either: plugins carry `SessionStart` hooks, so disabling `caveman`/`ponytail` to reclaim ~840 tok also turns the mode off.
 4. **Pick the subagent model per stage.** Use only `sonnet-5` and `opus-5`. Opus costs several times a Sonnet agent per run. Sonnet for finders, scanners, verifiers, mechanical stages. Inherited Opus for **any stage whose output gates real spend** — plan design, adversarial critique, synthesis — not just the last one. Gate on what the stage's output authorizes, not its position. Effort `high` on Sonnet reasoning stages, `low`/`medium` on mechanical ones (grep, collect, transform) where high effort only buys extra tool calls. **In `Workflow` scripts write `{model: 'sonnet', effort: 'low'}` on every `agent()` call by default** — omitted `model` means `inherit`, so an `opus[1m]` session silently fans out Opus at ~4.7× cost. Raise off the default only deliberately. `Workflow`-only rule — plain `Agent` calls (Explore, forks, one-off investigators) keep inheriting the session model unless instructed otherwise.
 5. **Fan out wide, verify narrow.** Spend the 6-agent budget on distinct lenses, not redundant refuters. Verification cost is `findings × voters`; 2-3 lenses is enough.
+
+## Killing processes
+
+Never `pkill -f` or `pgrep -f` with a pattern that the calling command line itself contains. The shell that runs the `pkill` matches too and dies (exit 144), and so does every watcher that quotes the same string. Save `$!` to a pid file when you start a background process and kill by PID. No PID? Bracket the first letter: `pkill -f '[c]url -o file'`. The literal text `[c]url` does not match the regex `[c]url`, so the caller survives.
 
 ## Python Projects
 

@@ -2,7 +2,7 @@
   "permissions": {
     "defaultMode": "dontAsk"
   },
-  "model": "opus[1m]",
+  "model": "fable",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
@@ -48,6 +48,7 @@
   },
   "outputStyle": "STE Explanatory",
   "language": "English",
+  "effortLevel": "medium",
   "autoCompactWindow": 173000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
@@ -64,5 +65,9 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "voiceEnabled": true,
-  "effortLevel": "xhigh"
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "xhigh"
+    }
+  }
 }
