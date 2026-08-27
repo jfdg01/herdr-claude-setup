@@ -2,7 +2,7 @@
   "permissions": {
     "defaultMode": "dontAsk"
   },
-  "model": "fable",
+  "model": "opus[1m]",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
@@ -30,7 +30,8 @@
   "enabledPlugins": {
     "caveman@caveman": false,
     "frontend-design@claude-plugins-official": false,
-    "ponytail@ponytail": true
+    "ponytail@ponytail": true,
+    "mattpocock-skills@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -46,9 +47,17 @@
       }
     }
   },
-  "outputStyle": "STE Explanatory",
-  "language": "English",
+  "outputStyle": "STE-100",
+  "language": "English or Español",
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-opus-5": {
+      "effortLevel": "xhigh"
+    }
+  },
   "autoCompactWindow": 173000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
@@ -64,10 +73,5 @@
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "voiceEnabled": true,
-  "modelSettings": {
-    "claude-fable-5": {
-      "effortLevel": "xhigh"
-    }
-  }
+  "voiceEnabled": true
 }
