@@ -29,8 +29,12 @@ the repo and `git diff` is the drift detector.
     target — see the hygiene section of `CLAUDE.md` for the measurements and
     the bundle formula behind both numbers.
   - opus[1m], `medium` effort, `dontAsk` permissions, remote control at startup.
-- **claude shell alias** — `--dangerously-skip-permissions --remote-control`
-  (`config/shell/aliases.sh`, sourced from `~/.bashrc`).
+- **claude shell function** — `--dangerously-skip-permissions --remote-control`,
+  and it pre-trusts `$PWD` so the "Quick safety check" folder dialog never
+  appears (`config/shell/aliases.sh`, sourced from `~/.bashrc`). Trust lives in
+  `projects["<dir>"].hasTrustDialogAccepted` in `~/.claude.json`, one key per
+  directory; inheritance from a parent stops at the git repo root, so there is
+  no global switch to set instead. Needs `jq`.
 - **GNOME night-light** — always on, 4000K, dark color-scheme.
 
 ## Install
