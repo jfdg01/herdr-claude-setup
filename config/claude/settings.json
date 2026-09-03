@@ -2,7 +2,7 @@
   "permissions": {
     "defaultMode": "dontAsk"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5-1[1m]",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
@@ -55,6 +55,9 @@
       "effortLevel": "xhigh"
     },
     "claude-opus-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-fable-5-1": {
       "effortLevel": "xhigh"
     }
   },

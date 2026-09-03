@@ -71,7 +71,7 @@ Reserve is a **flat 33k** (`min(max_output_tokens, 20000) + 13000`), not 30% of 
 
 ## Killing processes
 
-Never `pkill -f` or `pgrep -f` with a pattern that the calling command line itself contains. The shell that runs the `pkill` matches too and dies (exit 144), and so does every watcher that quotes the same string. Save `$!` to a pid file when you start a background process and kill by PID. No PID? Bracket the first letter: `pkill -f '[c]url -o file'`. The literal text `[c]url` does not match the regex `[c]url`, so the caller survives.
+Never `pkill -f` or `pgrep -f` with a pattern that the calling command line itself contains. The shell that runs the `pkill` matches too and dies (exit 144), and so does every watcher that quotes the same string. Save `$!` to a pid file when you start a background process and kill by PID. No PID? Bracket the first letter, always: `pkill -f '[c]url -o file'`, `pkill -f '[s]rc/serve.py'`. The literal text `[c]url` does not match the regex `[c]url`, so the caller survives. This matters most in a compound command such as `pkill ... && ./serve.sh`: the plain pattern kills its own shell and the later steps never run. It killed a restart shell more than once.
 
 ## Python Projects
 
