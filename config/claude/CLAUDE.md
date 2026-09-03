@@ -71,7 +71,11 @@ Reserve is a **flat 33k** (`min(max_output_tokens, 20000) + 13000`), not 30% of 
 
 ## Killing processes
 
-Never `pkill -f` or `pgrep -f` with a pattern that the calling command line itself contains. The shell that runs the `pkill` matches too and dies (exit 144), and so does every watcher that quotes the same string. Save `$!` to a pid file when you start a background process and kill by PID. No PID? Bracket the first letter, always: `pkill -f '[c]url -o file'`, `pkill -f '[s]rc/serve.py'`. The literal text `[c]url` does not match the regex `[c]url`, so the caller survives. This matters most in a compound command such as `pkill ... && ./serve.sh`: the plain pattern kills its own shell and the later steps never run. It killed a restart shell more than once.
+Never `pkill -f` or `pgrep -f` with a pattern that the calling command line itself contains. The shell that runs the `pkill` matches too and dies (exit 144), and so does every watcher that quotes the same string. Save `$!` to a pid file when you start a background process and kill by PID. No PID? Bracket the first letter, always: `pkill -f '[c]url -o file'`, `pkill -f '[s]rc/serve.py'`. The literal text `[c]url` does not match the regex `[c]url`, so the caller survives. This matters most in a compound command such as `pkill ... && ./serve.sh`: the plain pattern kills its own shell and the later steps never run. It killed a restart shell more than once. The bracket guards the pattern text alone: any other word on the same command line that the regex matches kills the shell just the same (`pkill -f '[s]am2.safetensors'; rm sam2.safetensors` matched the `rm`, exit 144, and the `rm` never ran). Run `pkill` alone on its line, or match the process name with `pgrep -x curl` / `pkill -x curl`.
+
+## Playwright browsers
+
+`~/.cache/ms-playwright/` vanishes now and then, and every Playwright script then dies with `Executable doesn't exist at ~/.cache/ms-playwright/chromium_headless_shell-…`. Run `.venv/bin/playwright install chromium` from the project's venv and carry on. Do not pin or vendor the browser.
 
 ## Python Projects
 
