@@ -9,7 +9,7 @@ Every change in a git repo:
 1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch nothing. Clean → `git checkout main && git pull`.
 2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
 3. **Commit iteratively** on the branch. Read the branch name before every commit — it can move under you between my words. On `main`? Stop and say so.
-4. **Review gate — I read every commit before it lands.** Approval is **per commit**, not per branch. Push, **restart what still runs the old code** (see below), hand me the link to the new commit, then **stop and wait**:
+4. **Review gate — I read every commit before it lands.** Approval is **per commit**, not per branch. Push, **restart when the change needs it** (see below), hand me the link to the new commit, then **stop and wait**:
 
    ```bash
    git push -u origin HEAD
@@ -25,7 +25,7 @@ Every change in a git repo:
    - **Never close onto `main` without that word.** Silence is not approval.
    - **No shortcut skips this.** `fc` and any other "do the whole cycle" alias stops here too.
    - No GitHub remote or no `gh` → give me `git show HEAD | delta -s` instead and still wait.
-   - **Restart before the link, not after the word.** The change does not reach a running process on its own — a server, a daemon, a watcher with no reload — restart it now, so I read the commit and try it in the same sitting. Use the project's own start script when it has one. Say what you restarted and how you checked it answers. A rejected commit reverts in one command, so a restart before my word costs nothing; a page still serving the old code is a change I read as broken.
+   - **Restart before the link, not after the word, and only when needed.** The change does not reach a running process on its own — a server, a daemon, a watcher with no reload — restart it now, so I read the commit and try it in the same sitting. Use the project's own start script when it has one. Say what you restarted and how you checked it answers. A rejected commit reverts in one command, so a restart before my word costs nothing; a page still serving the old code is a change I read as broken. A change that no running process serves — docs, tests, a script — gets no restart.
 
 5. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch. **The commit that closes gets no link.** Its content is what I already approved, so handing it over is a reread with nothing new in it — that is the busy work step 4 exists to stop, not to create. Exception: a conflict you resolved by hand *is* new content and gets its link. Report the close, do not ask about it.
 6. **Push `main`.** A step of its own, after the close. Never fold it into the merge; the merge is delicate and stands alone. Push, report the push, do not ask. Next change restarts at step 1.
