@@ -9,7 +9,7 @@ Every change in a git repo:
 1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch nothing. Clean → `git checkout main && git pull`.
 2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
 3. **Commit iteratively** on the branch. Read the branch name before every commit — it can move under you between my words. On `main`? Stop and say so.
-4. **Review gate — I read every commit before it lands.** Approval is **per commit**, not per branch. Push, hand me the link to the new commit, then **stop and wait**:
+4. **Review gate — I read every commit before it lands.** Approval is **per commit**, not per branch. Push, **restart what still runs the old code** (see below), hand me the link to the new commit, then **stop and wait**:
 
    ```bash
    git push -u origin HEAD
@@ -20,15 +20,16 @@ Every change in a git repo:
 
    - **Several new commits since my last word?** One link each, oldest first, naming the files each one touches.
    - **A fix that rewrites an already-approved commit:** say so, and offer the full diff. That is the one case where rereading is the point.
-   - **A fix on top of a commit I rejected:** name the commit it replaces. That commit needs no yes of its own — step 6 squashes the branch, so a line I rejected reaches no tree I keep. The replacement needs the word. Part of the rejected commit survives into the end state? Name that part, and ask for a word on it alone. Never let it ride on the fix.
+   - **A fix on top of a commit I rejected:** name the commit it replaces. That commit needs no yes of its own — step 5 squashes the branch, so a line I rejected reaches no tree I keep. The replacement needs the word. Part of the rejected commit survives into the end state? Name that part, and ask for a word on it alone. Never let it ride on the fix.
    - **Amend, or a commit on top?** Small, local fix → on top. The commit is wrong as a whole → amend it, force-push the branch, hand the new link. Nothing in it was approved, so no reread happens, and a commit on top would hand me a diff of a diff. Test: does the fix read on its own?
    - **Never close onto `main` without that word.** Silence is not approval.
    - **No shortcut skips this.** `fc` and any other "do the whole cycle" alias stops here too.
    - No GitHub remote or no `gh` → give me `git show HEAD | delta -s` instead and still wait.
-5. **Restart what still runs the old code.** Approved, and the change does not reach a running process on its own — a server, a daemon, a watcher with no reload — restart it now, before you report. Use the project's own start script when it has one. Then say what you restarted and how you checked it answers. A page still serving the old code is a change I read as broken.
-6. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch. **The commit that closes gets no link.** Its content is what I already approved, so handing it over is a reread with nothing new in it — that is the busy work step 4 exists to stop, not to create. Exception: a conflict you resolved by hand *is* new content and gets its link. Report the close, do not ask about it.
-7. **Push `main`.** A step of its own, after the close. Never fold it into the merge; the merge is delicate and stands alone. Push, report the push, do not ask. Next change restarts at step 1.
-8. **Close the issue.** The work came from an issue, and every commit that landed has my word → the issue is done. My approval of the commits is the approval of the close; do not ask again. Write `Closes #N` in the commit that closes onto `main`, so the push of `main` closes it. Tick its acceptance boxes. If the push did not close it, close it with `gh issue close N` and one comment that names the commit.
+   - **Restart before the link, not after the word.** The change does not reach a running process on its own — a server, a daemon, a watcher with no reload — restart it now, so I read the commit and try it in the same sitting. Use the project's own start script when it has one. Say what you restarted and how you checked it answers. A rejected commit reverts in one command, so a restart before my word costs nothing; a page still serving the old code is a change I read as broken.
+
+5. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch. **The commit that closes gets no link.** Its content is what I already approved, so handing it over is a reread with nothing new in it — that is the busy work step 4 exists to stop, not to create. Exception: a conflict you resolved by hand *is* new content and gets its link. Report the close, do not ask about it.
+6. **Push `main`.** A step of its own, after the close. Never fold it into the merge; the merge is delicate and stands alone. Push, report the push, do not ask. Next change restarts at step 1.
+7. **Close the issue.** The work came from an issue, and every commit that landed has my word → the issue is done. My approval of the commits is the approval of the close; do not ask again. Write `Closes #N` in the commit that closes onto `main`, so the push of `main` closes it. Tick its acceptance boxes. If the push did not close it, close it with `gh issue close N` and one comment that names the commit.
 
 `main` is always deployable.
 
