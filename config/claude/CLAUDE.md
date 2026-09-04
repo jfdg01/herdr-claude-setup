@@ -28,6 +28,7 @@ Every change in a git repo:
 5. **Restart what still runs the old code.** Approved, and the change does not reach a running process on its own — a server, a daemon, a watcher with no reload — restart it now, before you report. Use the project's own start script when it has one. Then say what you restarted and how you checked it answers. A page still serving the old code is a change I read as broken.
 6. **Close onto `main`:** 1 commit → fast-forward; several → squash to one. merge and delete branch. **The commit that closes gets no link.** Its content is what I already approved, so handing it over is a reread with nothing new in it — that is the busy work step 4 exists to stop, not to create. Exception: a conflict you resolved by hand *is* new content and gets its link. Report the close, do not ask about it.
 7. **Push `main`.** A step of its own, after the close. Never fold it into the merge; the merge is delicate and stands alone. Push, report the push, do not ask. Next change restarts at step 1.
+8. **Close the issue.** The work came from an issue, and every commit that landed has my word → the issue is done. My approval of the commits is the approval of the close; do not ask again. Write `Closes #N` in the commit that closes onto `main`, so the push of `main` closes it. Tick its acceptance boxes. If the push did not close it, close it with `gh issue close N` and one comment that names the commit.
 
 `main` is always deployable.
 
