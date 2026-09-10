@@ -91,6 +91,10 @@ If not installed curl it.
 
 Prefer our custom `md-to-pdf file.md`, over another method. On `PATH` everywhere (`~/.local/bin/md-to-pdf` -> `~/md-to-pdf/src/md-to-pdf`), runs inside that repo's own venv.
 
+## Fonts
+
+The user's preferred fonts (Source Serif 4, Space Grotesk, Space Mono) are located in `~/.local/share/fonts/`. Copy a family folder from there into a project that needs it, with its `OFL.txt`.
+
 ## Godot + Spine2D + Claude Setup
 
 Working on a Godot / Spine2D / spine-godot project? **ALWAYS read `~/.claude/godot-spine.md` first.** Everything — paths, pinned versions, MCP wiring, export rules — is there.
