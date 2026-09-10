@@ -49,7 +49,7 @@
   },
   "outputStyle": "STE-100",
   "language": "English or Español",
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "modelSettings": {
     "claude-fable-5": {
       "effortLevel": "xhigh"
@@ -58,7 +58,7 @@
       "effortLevel": "xhigh"
     },
     "claude-fable-5-1": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     }
   },
   "autoCompactWindow": 173000,

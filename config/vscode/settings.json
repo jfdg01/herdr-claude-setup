@@ -20,4 +20,5 @@
   "explorer.confirmDelete": false,
   "python.analysis.typeCheckingMode": "strict",
   "claudeCode.preferredLocation": "panel",
+  "diffEditor.renderSideBySide": false,
 }
