@@ -2,7 +2,7 @@
   "permissions": {
     "defaultMode": "dontAsk"
   },
-  "model": "claude-fable-5-1[1m]",
+  "model": "opus[1m]",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
@@ -55,9 +55,12 @@
       "effortLevel": "xhigh"
     },
     "claude-opus-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "medium"
     },
     "claude-fable-5-1": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
       "effortLevel": "high"
     }
   },
@@ -73,6 +76,7 @@
   "editorMode": "normal",
   "autoCompactEnabled": false,
   "switchModelsOnFlag": false,
+  "autoContinueAtUsageLimit": false,
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
