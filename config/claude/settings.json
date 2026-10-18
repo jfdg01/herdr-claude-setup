@@ -7,7 +7,7 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "*",
+        "matcher": "^(startup|resume|clear|compact|fork)$",
         "hooks": [
           {
             "type": "command",
@@ -64,7 +64,7 @@
       "effortLevel": "high"
     }
   },
-  "autoCompactWindow": 173000,
+  "autoCompactWindow": 143000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "fullscreen",
@@ -74,7 +74,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "normal",
-  "autoCompactEnabled": false,
+  "autoCompactEnabled": true,
   "switchModelsOnFlag": false,
   "autoContinueAtUsageLimit": false,
   "remoteControlAtStartup": true,

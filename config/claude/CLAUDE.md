@@ -4,7 +4,9 @@ Source of truth for every machine. Lives in `herdr-claude-setup`, symlinked to `
 
 ## Git Workflow (mandatory)
 
-Every change in a git repo:
+Every change in a git repo, except `herdr-claude-setup`:
+
+**`herdr-claude-setup` is exempt from this whole workflow.** Its changes are small and sync across machines. Commit straight on `main`, push right after, report the push. No branch, no merge, no commit link, no wait for my word.
 
 1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch nothing. Clean → `git checkout main && git pull`.
 2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
