@@ -8,6 +8,8 @@ Every change in a git repo, except `herdr-claude-setup`:
 
 **`herdr-claude-setup` is exempt from this whole workflow.** Its changes are small and sync across machines. Commit straight on `main`, push right after, report the push. No branch, no merge, no commit link, no wait for my word.
 
+**A prototype iteration gets no commit until I say so.** An edit to a prototype (the `prototype` skill, a throwaway page or branch) stays in the working tree. Serve it, hand me the URL, wait for my word on what I see. No commit, no push, no commit link. I say "commit" → commit what stands then, and the rest of this workflow applies to that commit. A dirty tree that holds only the prototype is not the stop of step 1 while we iterate on it.
+
 1. **Clean `main` first.** `git status` not clean → **STOP, notify user**, touch nothing. Clean → `git checkout main && git pull`.
 2. **Own branch:** `git checkout -b feat/<whatever>`. Never work on `main`.
 3. **Commit iteratively** on the branch. Read the branch name before every commit — it can move under you between my words. On `main`? Stop and say so.
