@@ -111,3 +111,7 @@ When handing a command to the user, `xclip` it to their clipboard as well as sho
 ## Prototypes on the tailnet
 
 A prototype you build gets served on the tailnet, so I can open it from any device on any network. Bind the server to this machine's Tailscale address (`tailscale ip -4`), never only to `localhost`. Hand me the MagicDNS URL (`http://<host>.<tailnet>.ts.net:<port>/…`, from `tailscale status --self --json`), check that it answers with `curl`, and `xclip` it.
+
+## Memories live in two places
+
+Global memory is `~/.claude/projects/-home-gara/memory/`. Each project has its own at `~/.claude/projects/<cwd with / as ->/memory/`. Check global memory → check the project one too, and the reverse. A saved order, a decision or a feedback rule is often only in the project one.
