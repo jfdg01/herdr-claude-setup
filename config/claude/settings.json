@@ -2,7 +2,7 @@
   "permissions": {
     "defaultMode": "dontAsk"
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
@@ -64,7 +64,7 @@
       "effortLevel": "high"
     }
   },
-  "autoCompactWindow": 143000,
+  "autoCompactWindow": 163000,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "fullscreen",
